@@ -8,6 +8,14 @@ def make_global_df(condition):
     return df
 
 
+def make_country_df(country):
+    df = pd.read_csv("data/time_confirmed.csv")
+    df = df.loc[df["Country/Region"] == country]
+    df = df.drop(columns=["Province/State", "Country/Region", "Lat", "Long"], axis=1).sum().reset_index(name="confirmed")
+    df = df.rename(columns={"index": "date"})
+    return df
+
+
 daily_df = pd.read_csv("data/daily_report.csv")
 
 totals_df = (
