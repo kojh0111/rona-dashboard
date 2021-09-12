@@ -17,6 +17,13 @@ countries_df = (
     .reset_index()
 )
 
+dropdown_options = (
+    countries_df[["Country_Region"]]
+    .sort_values("Country_Region")
+    .reset_index(drop=True)
+    .iloc[:, 0]
+)
+
 
 def make_country_df(country):
     def make_df(condition):
