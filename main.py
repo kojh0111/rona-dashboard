@@ -2,7 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
-from data import countries_df
+from data import countries_df, totals_df
 from builders import make_table
 
 stylesheets = [
@@ -23,6 +23,7 @@ bubble_map = px.scatter_geo(
     projection="natural earth",
     size_max=40,
     template="plotly_dark",
+    title="Confirmed By Country",
     hover_data={
         "Confirmed": ":,2f",
         "Deaths": ":,2f",
@@ -30,6 +31,18 @@ bubble_map = px.scatter_geo(
         "Country_Region": False,
     },
 )
+
+bars_graph = px.bar(
+    totals_df,
+    x="condition",
+    hover_data={"count": ":,"},
+    y="count",
+    template="plotly_dark",
+    title="Total Global Cases",
+    labels={"condition": "Condition", "count": "Count", "color": "Condition"},
+)
+
+bars_graph.update_traces(marker_color=["#e74c3c", "#8e44ad", "#27ae60"])
 
 app.layout = html.Div(
     style={
@@ -44,10 +57,30 @@ app.layout = html.Div(
             children=[html.H1("Corona Dashboard", style={"fontSize": 40})],
         ),
         html.Div(
+            style={
+                "display": "grid",
+                "gap": 50,
+                "gridTemplateColumns": "repeat(7, 1fr)",
+            },
             children=[
-                html.Div(children=[dcc.Graph(figure=bubble_map)]),
-                html.Div(children=[make_table(countries_df)]),
-            ]
+                html.Div(
+                    style={"grid-column": "span 5"},
+                    children=[dcc.Graph(figure=bubble_map)],
+                ),
+                html.Div(
+                    style={"grid-column": "span 2"}, children=[make_table(countries_df)]
+                ),
+            ],
+        ),
+        html.Div(
+            style={
+                "display": "grid",
+                "gap": 50,
+                "gridTemplateColumns": "repeat(4, 1fr)",
+            },
+            children=[
+                html.Div(children=[dcc.Graph(figure=bars_graph)]),
+            ],
         ),
     ],
 )
